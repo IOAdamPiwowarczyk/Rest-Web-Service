@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import pl.example.spring.punkty.NoStudentException;
 import pl.example.spring.punkty.model.NewStudent;
+import pl.example.spring.punkty.model.Score;
 import pl.example.spring.punkty.model.Student;
 import pl.example.spring.punkty.service.StudentService;
 
@@ -38,6 +40,19 @@ public class PunktyController {
 	public Student setNumber(@PathVariable("id") long id, @PathVariable("number") String number) {
 		return service.changeNumber(id, number).orElseThrow(
 				() -> new IllegalArgumentException("Student o id: " + id + " does not exist"));
+	}
+	
+	@RequestMapping(value = "/students/{id}", method = RequestMethod.DELETE)
+	public Student deleteStudent(@PathVariable("id") long id) {
+		return service.deleteStudent(id).orElseThrow(
+				() -> new IllegalArgumentException("Student o id: " + id + " does not exist"));
+	}
+	
+	@RequestMapping(value = "/students/{id}/socres", method = RequestMethod.POST)
+	public int addScore(@RequestBody Score score, @PathVariable("id") long id) {
+		return this.service.addScore(id, score)
+				.orElseThrow(
+						()->new NoStudentException(id));		
 	}
 
 }
